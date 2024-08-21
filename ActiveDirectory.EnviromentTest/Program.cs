@@ -25,7 +25,8 @@ namespace ActiveDirectory.EnviromentTest {
              *  Enter the administrator credentials here or create a user and move them to the administrator group
              *  either one will work. Copy and paste their credential here
              */
-            ActiveDirectoryUser existingAdminUser = new ActiveDirectoryUser(string.Empty, string.Empty);
+            ActiveDirectoryUser existingAdminUser = new(username: string.Empty,
+                                                        password: string.Empty);
 
 
             /*
@@ -37,7 +38,6 @@ namespace ActiveDirectory.EnviromentTest {
 
             if(string.IsNullOrWhiteSpace(existingAdminUser.Password))
                 throw new ArgumentException(nameof(existingAdminUser.Password));
-
 
             if(string.IsNullOrWhiteSpace(FullyQualifiedDomainName))
                 throw new ArgumentException(nameof(FullyQualifiedDomainName));
@@ -56,21 +56,15 @@ namespace ActiveDirectory.EnviromentTest {
 
             // Create user and assign them to a group.
             int RandomInt = RandomGenerator.Next(100000, 999999);
-
             ActiveDirectoryUser newUser = new ActiveDirectoryUser($"TestUser{RandomInt}", "Password123"); 
-
             using UserPrincipal userPrincipal = new UserPrincipal(context: context,
                                                                   samAccountName: newUser.Username,
                                                                   password: newUser.Password,
                                                                   enabled: true);
             userPrincipal.Save();
-
-
-            
-            // Wait 2 seconds to give the DC time to create user.. 
+                                    
+            // Wait to allow the DC to propigate user.. 
             Task.Delay(2000).Wait();  
-
-
 
             // Create Group
             int OtherRandomInt = RandomGenerator.Next(100000, 999999);  
